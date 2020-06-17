@@ -4,11 +4,14 @@ import br.com.wsilva.model.entity.FlightBagsPriceEntity;
 import br.com.wsilva.model.projection.FlightsBagsPriceAverageProjection;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
+@RepositoryRestResource(path = "flightBagsPrices")
 public interface FlightBagsPriceRepository extends CrudRepository<FlightBagsPriceEntity, Integer> {
 
     @Query(value =
@@ -19,6 +22,7 @@ public interface FlightBagsPriceRepository extends CrudRepository<FlightBagsPric
             + " and sp.sear_id = ?1 "
             + " and f.flig_fly_to = ?2 "
             + " group by f.flig_fly_to, fbp.flbp_hand ", nativeQuery = true)
+    @RestResource(exported = false)
     List<FlightsBagsPriceAverageProjection> findFlightsBagsPriceAverage(Integer searchParameterId,
                                                                         String flyTo);
 }
