@@ -13,6 +13,8 @@ import br.com.wsilva.repository.FlightBagsPriceRepository;
 import br.com.wsilva.repository.FlightConversionRepository;
 import br.com.wsilva.repository.FlightRepository;
 import br.com.wsilva.repository.SearchParameterRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -23,6 +25,7 @@ import java.util.*;
 
 @Service
 public class FlightService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FlightService.class.getName());
     private final String BASE_URL = "https://api.skypicker.com/flights?";
 
     private RestTemplate restTemplate;
@@ -67,6 +70,8 @@ public class FlightService {
     }
 
     public SearchParameterEntity getFlightRemote(String[] dest, String dateFrom, String dateTo, String curr) {
+        LOGGER.info("Getting Flights from external server.");
+
         String flyto = "";
         StringBuilder builder = new StringBuilder();
         builder.append("partner=picky");
@@ -101,7 +106,7 @@ public class FlightService {
     }
 
     @Transactional(value = Transactional.TxType.REQUIRED)
-    public SearchParameterEntity saveFlightToDatabase(String dest, String dateFrom, String dateTo, String curr,
+    private SearchParameterEntity saveFlightToDatabase(String dest, String dateFrom, String dateTo, String curr,
                                         FlightsResponseDTO flightsResponse) {
         if (flightsResponse != null) {
             if (flightsResponse.getData() != null) {
